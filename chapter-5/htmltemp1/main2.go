@@ -48,6 +48,8 @@ func init() {
 	templates["index"] = template.Must(template.ParseFiles(path+"templates/index.html", path+"templates/base.html"))
 	templates["add"] = template.Must(template.ParseFiles(path+"templates/add.html", path+"templates/base.html"))
 	templates["edit"] = template.Must(template.ParseFiles(path+"templates/edit.html", path+"templates/base.html"))
+	urlsData[0] = URLData{Id:1,Url:"www.baidu.com",Name:"百度",Times:0}
+	urlsData[1] = URLData{Id:2,Url:"www.jianshu.com",Name:"简书",Times:0}
 }
 
 //Render templates for the given name, template definition and data object
@@ -69,9 +71,7 @@ func renderTemplate1(w http.ResponseWriter, name string, template string, viewMo
 
 //Handler for "/" which render the index page
 func getNotes1(w http.ResponseWriter, r *http.Request) {
-	urlsData[0] = URLData{Id:1,Url:"www.baidu.com",Name:"百度",Times:0}
-	urlsData[1] = URLData{Id:2,Url:"www.jianshu.com/",Name:"简书",Times:0}
-	//data := EditNote{"1",urlsData}
+
 	renderTemplate1(w, "index", "base", urlsData)
 }
 
@@ -80,6 +80,15 @@ func viewUrl(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	k := vars["url"]
 	// Remove from Store
+	for i := 0;i<len(urlsData);i++ {
+		if len(urlsData[i].Name) > 0 && urlsData[i].Url == k {
+			println("name=",urlsData[i].Name,"url=",urlsData[i].Url)
+			urlsData[i].Times++
+
+			println(urlsData[i].Url,"访问次数:",urlsData[i].Times)
+		}
+
+	}
 	println("url = ",k)
 	http.Redirect(w, r, "http://"+k, 302)
 }

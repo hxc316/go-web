@@ -23,7 +23,9 @@
     <ul class="list-group">
     </ul>
     {{ range . }}
-        <li class="list-group-item"> <a href="http://localhost:8080/view/{{ .Url }}" target="_blank">{{.Name}}</a></li>
+        {{ if .Url }}
+            <li class="list-group-item"> <a href="http://localhost:8080/view/{{ .Url }}" target="_blank">{{.Name}}</a> <span>访问次数: {{.Times}}</span></li>
+        {{ end }}
     {{ end }}
 </div>
 
