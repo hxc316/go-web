@@ -1,0 +1,18 @@
+{
+  "dbType": "sqlite",
+  "tables": [
+    {
+      "name": "member",
+      "columns": [
+        {
+          "name": "username",
+          "col_type": "varchar"
+        },
+        {
+          "name": "age",
+          "col_type": "int"
+        }
+      ]
+    }
+  ]
+}
