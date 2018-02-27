@@ -7,6 +7,9 @@ import (
 	//"strconv"
 	"time"
 	"github.com/gorilla/mux"
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
+	"fmt"
 )
 
 type Note struct {
@@ -15,7 +18,7 @@ type Note struct {
 	CreatedOn   time.Time
 }
 
-type URLData struct {
+type URLData1 struct {
 	Id	int
 	Url	string
 	Name	string
@@ -71,8 +74,9 @@ func renderTemplate1(w http.ResponseWriter, name string, template string, viewMo
 
 //Handler for "/" which render the index page
 func getNotes1(w http.ResponseWriter, r *http.Request) {
-
-	renderTemplate1(w, "index", "base", urlsData)
+	db := &DB1{}
+	urlsData1 := db.Query1()
+	renderTemplate1(w, "index", "base", urlsData1)
 }
 
 func viewUrl(w http.ResponseWriter, r *http.Request) {
@@ -80,12 +84,15 @@ func viewUrl(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	k := vars["url"]
 	// Remove from Store
-	for i := 0;i<len(urlsData);i++ {
-		if len(urlsData[i].Name) > 0 && urlsData[i].Url == k {
-			println("name=",urlsData[i].Name,"url=",urlsData[i].Url)
-			urlsData[i].Times++
-
-			println(urlsData[i].Url,"访问次数:",urlsData[i].Times)
+	db := &DB1{}
+	urlsDatas1 := db.Query1()
+	for i := 0;i<len(urlsDatas1);i++ {
+		if len(urlsDatas1[i].Name) > 0 && urlsDatas1[i].Url == k {
+			println("name=",urlsDatas1[i].Name,"url=",urlsDatas1[i].Url)
+			urlsDatas1[i].Times++
+			db := &DB1{}
+			db.update1(urlsDatas1[i])
+			println(urlsDatas1[i].Url,"访问次数增加到:",urlsDatas1[i].Times)
 		}
 
 	}
@@ -93,8 +100,79 @@ func viewUrl(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "http://"+k, 302)
 }
 
+
+type DB1 struct {
+
+}
+
+type Aq struct {
+	Id string
+}
+
+type URLData struct {
+	Id	int
+	Url	string
+	Name	string
+	Times	int
+}
+
+func (*DB1)  add1(){
+	db, err := sql.Open("sqlite3", "S:\\go2018\\src\\github.com\\hxc316\\go-web\\chapter-5\\htmltemp1\\urldb")
+	checkErr1(err)
+
+	//插入数据
+	stmt, err := db.Prepare("INSERT INTO urls(url, name,count) values(?,?,?)")
+	checkErr1(err)
+
+	res, err := stmt.Exec("aa", "ss", 1)
+	checkErr1(err)
+	id, err := res.LastInsertId()
+	fmt.Println("id=",id)
+
+	checkErr1(err)
+}
+
+func (*DB1)  update1(url URLData1){
+	db, err := sql.Open("sqlite3", "S:\\go2018\\src\\github.com\\hxc316\\go-web\\chapter-5\\htmltemp1\\urldb")
+	checkErr1(err)
+
+	//插入数据
+	stmt, err := db.Prepare("update urls set count = ? where id = ?")
+	checkErr1(err)
+
+	res, err := stmt.Exec(url.Times, url.Id)
+	affect, err := res.RowsAffected()
+
+	println("更新影响数据:",affect,"行")
+	checkErr1(err)
+}
+
+func (*DB1) Query1()  (mm [2]URLData1){
+	db, err := sql.Open("sqlite3", "S:\\go2018\\src\\github.com\\hxc316\\go-web\\chapter-5\\htmltemp1\\urldb")
+	//defer db.Close()
+	checkErr1(err)
+	//查询数据
+	rows, err := db.Query("SELECT t.* FROM urls t")
+	checkErr1(err)
+
+	i := 0
+	for rows.Next(){
+		var id int
+		var url string
+		var name string
+		var count int
+		err = rows.Scan(&id,&url,&name,&count)
+		mm[i] = URLData1{id,url,name,count}
+		//mm[i] = Data{1,"qq","qq",1}
+		//i++
+		checkErr1(err)
+		println("url = ",url," | name = ",name," | count = ",count)
+	}
+	return mm
+}
 //Entry point of the program
 func main() {
+
 	r := mux.NewRouter().StrictSlash(false)
 	fs := http.FileServer(http.Dir("public"))
 	r.Handle("/public/", fs)
@@ -107,4 +185,10 @@ func main() {
 	}
 	log.Println("Listening...")
 	server.ListenAndServe()
+}
+
+func checkErr1(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
