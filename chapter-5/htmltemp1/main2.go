@@ -164,7 +164,7 @@ func (*DB1) Query1()  (mm [2]URLData1){
 		err = rows.Scan(&id,&url,&name,&count)
 		mm[i] = URLData1{id,url,name,count}
 		//mm[i] = Data{1,"qq","qq",1}
-		//i++
+		//i++   ss
 		checkErr1(err)
 		println("url = ",url," | name = ",name," | count = ",count)
 	}
