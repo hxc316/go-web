@@ -3,6 +3,7 @@ package main
 import (
 	"strconv"
 	"time"
+	//"github.com/wandoulabs/codis/pkg/utils/errors"
 )
 
 func main() {
@@ -10,7 +11,9 @@ func main() {
 	//testChain()
 	//testStrconv()
 	//testByte()
-	testSelect()
+	//testSelect()
+
+	testIf()
 
 }
 
@@ -52,4 +55,20 @@ func testSelect()  {
 
 	}()
 	time.Sleep(time.Millisecond * 200)
+}
+
+func testIf()  {
+	var(
+		a ,b bool
+	)
+	a ,b = true,true
+
+	if a && b{
+		println("true")
+	}
+}
+
+func testError()  {
+	//a := errors.New("error test")
+
 }

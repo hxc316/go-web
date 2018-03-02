@@ -37,6 +37,25 @@ func receiveMsg(){
 	log.Println("time elapsed ", elapsed)
 
 }
+
+//-------------------------------------------------------
+
+type mm func()
+
+func (mm) a11()  {
+	println(123)
+}
+
+func test1()  {
+	var m1 mm
+	m1.a11()
+}
+
+func init() {
+	println("init method")
+}
+
 func main() {
-	receiveMsg()
+	//receiveMsg()
+	test1()
 }
