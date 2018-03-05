@@ -12,8 +12,8 @@ func main() {
 	//testStrconv()
 	//testByte()
 	//testSelect()
-
-	testIf()
+	testAppend()
+	//testIf()
 
 }
 
@@ -71,4 +71,15 @@ func testIf()  {
 func testError()  {
 	//a := errors.New("error test")
 
+}
+
+func testAppend()  {
+	var dd []string
+	dd = append(dd,"aaa")
+	dd = append(dd,"bbb")
+	dd = append(dd,"ccc")
+
+	for _ , s := range dd{
+		println(s)
+	}
 }
